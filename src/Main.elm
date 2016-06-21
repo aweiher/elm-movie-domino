@@ -19,7 +19,7 @@ main =
 
 init : ( Model, Cmd DominoAppMessage )
 init =
-    ( Model "" Nothing Nothing
+    ( Model "" Nothing (Just "Any Error") True
     , Cmd.none
     )
 
@@ -67,6 +67,13 @@ update msg model =
                     { model | actorSearchFieldText = newText }
             in
                 ( newModel, Cmd.none )
+
+        ToggleErrorDisplay ->
+            let
+              newModel =
+                {model | errorIsDisplayed = not model.errorIsDisplayed }
+            in
+              (newModel, Cmd.none)
 
 
 subscriptions : Model -> Sub DominoAppMessage

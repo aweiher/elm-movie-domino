@@ -1,5 +1,6 @@
 module Views exposing (view)
 
+import Http
 import Html exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (placeholder, class)
@@ -11,21 +12,37 @@ view : Model -> Html DominoAppMessage
 view model =
     div []
         (   [ renderHeader ]
-            ++ (renderErrorMessage model.errorMessage)
+            ++ [ renderErrorButtons ]
+            ++ (renderErrorMessage model.errorMessage model.errorIsDisplayed)
             ++ [ (renderSearchField model) ]
             ++ [ renderActorsListView model.actors ]
         )
 
 
-renderErrorMessage : Maybe String -> List (Html DominoAppMessage)
-renderErrorMessage maybeErrors =
+renderErrorMessage : Maybe String -> Bool -> List (Html DominoAppMessage)
+renderErrorMessage maybeErrors displayError =
     case maybeErrors of
         Nothing ->
             []
 
         Just errors ->
-            [ div [ class "bg-danger" ] [ text errors ] ]
+            case displayError of
+              True ->
+                [ div [ class "bg-danger" ] [ text errors ] ]
+              _ ->
+                [ div [] []]
 
+
+
+renderErrorButtons : Html DominoAppMessage
+renderErrorButtons =
+  div [ class "input-group"] [
+    button [onClick ToggleErrorDisplay] [text "show error message"],
+    button [onClick (SearchFailed Http.Timeout)] [text "timeout error"],
+    button [onClick (SearchFailed Http.NetworkError)] [text "network error"],
+    button [onClick (SearchFailed (Http.UnexpectedPayload "nope"))] [text "unexpected payload error"],
+    button [onClick (SearchFailed (Http.BadResponse 500 "nope"))] [text "bad response error"]
+  ]
 
 renderSearchField : Model -> Html DominoAppMessage
 renderSearchField model =

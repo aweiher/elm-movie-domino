@@ -13,6 +13,7 @@ type alias Model =
     { actorSearchFieldText : String
     , actors : Maybe (List Actor)
     , errorMessage : Maybe String
+    , errorIsDisplayed: Bool
     }
 
 
@@ -21,3 +22,4 @@ type DominoAppMessage
     | SearchSucceeded (List Actor)
     | SearchFailed Http.Error
     | TextChanged String
+    | ToggleErrorDisplay
